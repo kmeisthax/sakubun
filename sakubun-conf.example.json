@@ -1,0 +1,21 @@
+{
+    "databases": {
+        "default": {
+            "driver":"mysql",
+            "hostname":"localhost",
+            "username":"sakubun",
+            "password":"sakubun"
+        },
+        "memcached": {
+            "driver":"memcached",
+            "hostname":"localhost",
+            "username":"sakubun",
+            "password":"sakubun"
+        }
+    },
+    "sites": {
+        "default": {
+            "databases":["default", "memcached"]
+        }
+    }
+}
