@@ -20,6 +20,6 @@ func serve(handler http.Handler, cgi String) error {
     return nil
 }
 
-func setup_cgi() {
+func SetupCgi() {
     serve(r, config_cgi)
 }

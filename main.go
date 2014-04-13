@@ -1,11 +1,12 @@
-package "code.fantranslation.org/sakubun"
+package main
 
 import (
     "github.com/gorilla/mux"
+    "code.fantranslation.org/sakubun"
 )
 
-func Bootstrap() {
-    setup_config()
-    setup_router()
-    setup_cgi()
+func main() {
+    sakubun.SetupConfig()
+    sakubun.SetupRouter()
+    sakubun.SetupCgi()
 }

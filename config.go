@@ -26,7 +26,7 @@ var config_site string;
 var config_cgi string;
 var config Config{};
 
-func setup_config() error {
+func SetupConfig() error {
     flag.StringVar(&config_location, "conf", "sakubun-conf.json", "Define where the master configuration for Sakubun is.")
     flag.StringVar(&config_location, "site", "default", "Specify what site to serve requests for.")
     flag.StringVar(&config_location, "cgi", "cgi", "Specify what gateway interface to use.")

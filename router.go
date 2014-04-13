@@ -1,4 +1,4 @@
-package "code.fantranslation.org/sakubun"
+package sakubun
 
 import (
     "github.com/gorilla/mux"
@@ -6,7 +6,7 @@ import (
 
 var r mux.Router
 
-func setup_router() {
+func SetupRouter() {
     r = mux.NewRouter()
     
     
