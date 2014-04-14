@@ -1,4 +1,4 @@
-package "code.fantranslation.org/sakubun"
+package sakubun
 
 import (
     "flag"
