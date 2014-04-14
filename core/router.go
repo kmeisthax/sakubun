@@ -8,4 +8,6 @@ var r *mux.Router
 
 func SetupRouter() {
     r = mux.NewRouter()
+    
+    return
 }
