@@ -1,21 +1,13 @@
 {
-    "databases": {
+    "Databases": {
         "default": {
-            "driver":"mysql",
-            "hostname":"localhost",
-            "username":"sakubun",
-            "password":"sakubun"
-        },
-        "memcached": {
-            "driver":"memcached",
-            "hostname":"localhost",
-            "username":"sakubun",
-            "password":"sakubun"
+            "Driver":"mysql",
+            "DSN":"sakubun:sakubun@tcp(localhost)/sakubun"
         }
     },
-    "sites": {
+    "Sites": {
         "default": {
-            "databases":["default", "memcached"]
+            "Databases":["default"]
         }
     }
 }

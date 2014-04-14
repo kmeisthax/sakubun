@@ -8,9 +8,7 @@ import (
 
 type DatabaseConfig struct {
     Driver string
-    Hostname string
-    Username string
-    Password string
+    DSN string
 }
 
 type SiteConfig struct {

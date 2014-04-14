@@ -6,6 +6,7 @@ import (
 
 func main() {
     core.SetupConfig()
+    core.SetupDB()
     core.SetupRouter()
     core.SetupCgi()
 }
