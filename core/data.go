@@ -5,7 +5,7 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
-var databases map[string]sql.DB
+var databases map[string]*sql.DB
 
 func connect_database(name string) error {
     thedb, ok := sql.Open(config.Databases[name].Driver, config.Databases[name].DSN)
