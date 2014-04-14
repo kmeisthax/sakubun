@@ -24,7 +24,7 @@ type Config struct {
 var config_location string;
 var config_site string;
 var config_cgi string;
-var config Config{};
+var config Config;
 
 func SetupConfig() error {
     flag.StringVar(&config_location, "conf", "sakubun-conf.json", "Define where the master configuration for Sakubun is.")
