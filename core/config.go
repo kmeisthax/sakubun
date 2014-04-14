@@ -2,7 +2,7 @@ package core
 
 import (
     "flag"
-    "json"
+    "encoding/json"
 )
 
 type DatabaseConfig struct {
