@@ -2,23 +2,24 @@ package core
 
 import (
     "flag"
+    "os"
     "encoding/json"
 )
 
 type DatabaseConfig struct {
-    Driver String
-    Hostname String
-    Username String
-    Password String
+    Driver string
+    Hostname string
+    Username string
+    Password string
 }
 
 type SiteConfig struct {
-    Databases []String
+    Databases []string
 }
 
 type Config struct {
-    Databases map[String]DatabaseConfig
-    Sites map[String]SiteConfig
+    Databases map[string]DatabaseConfig
+    Sites map[string]SiteConfig
 }
 
 var config_location string;

@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-    sakubun.SetupConfig()
-    sakubun.SetupRouter()
-    sakubun.SetupCgi()
+    core.SetupConfig()
+    core.SetupRouter()
+    core.SetupCgi()
 }
