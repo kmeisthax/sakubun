@@ -1,7 +1,6 @@
 package main
 
 import (
-    "github.com/gorilla/mux"
     "code.fantranslation.org/sakubun/core"
 )
 
