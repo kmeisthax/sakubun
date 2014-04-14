@@ -1,4 +1,4 @@
-package sakubun
+package core
 
 import (
     "github.com/gorilla/mux"
