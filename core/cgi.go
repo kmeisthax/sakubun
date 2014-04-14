@@ -6,8 +6,8 @@ import (
     "net/http/fcgi"
 )
 
-func serve(handler http.Handler, cgi string) error {
-    switch cgi {
+func serve(handler http.Handler, cgiName string) error {
+    switch cgiName {
         case "cgi":
             return cgi.Serve(handler)
         case "fcgi":
