@@ -1,8 +1,6 @@
 package core
 
-import (
-    "github.com/gorilla/mux"
-)
+import "github.com/gorilla/mux"
 
 var r *mux.Router
 
