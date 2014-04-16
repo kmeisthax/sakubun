@@ -7,7 +7,8 @@
     },
     "Sites": {
         "default": {
-            "Databases":["default"]
+            "Databases":["default"],
+            "SessionEntropy":"i21joi2mof2ML+EM"
         }
     }
 }

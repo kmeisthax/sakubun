@@ -13,6 +13,7 @@ type DatabaseConfig struct {
 
 type SiteConfig struct {
     Databases []string
+    SessionEntropy string
 }
 
 type Config struct {
