@@ -21,5 +21,5 @@ func serve(handler http.Handler, cgiName string) error {
 }
 
 func SetupCgi() {
-    serve(r, config_cgi)
+    serve(SiteHandler(r), config_cgi)
 }
