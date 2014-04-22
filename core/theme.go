@@ -3,6 +3,8 @@ package core
 import (
     "html/template"
     "path/filepath"
+    "reflect"
+    "io"
 )
 
 /* A theme is a collection of templates and resources to be used together.
@@ -92,4 +94,32 @@ func RegisterTheme(th *Theme) error {
 
     th.hasBeenScanned = true
     return nil
+}
+
+/* Given assembled data, render it with an applicable theme.
+ * 
+ * Data is expected to be a struct or map of string to interface{}.
+ */
+func RenderData(th *Theme, data *interface{}, writer io.Writer) error {
+    data_type := reflect.TypeOf(data)
+    if data_type.Kind() == reflect.Ptr {
+        data_type = data_type.Elem()
+    }
+    
+    data_value := reflect.ValueOf(data)
+    //Variables we expect to extract from the data structure
+    var theme_name string
+    
+    if data_type.Kind() == reflect.Struct {
+        theme_field, ok := data_type.FieldByName("Theme")
+        if !ok {
+            return nil
+        }
+        
+        if theme_field.Type.Kind() == reflect.String {
+            
+        }
+    } else {
+        return nil
+    }
 }
