@@ -24,4 +24,6 @@ func SetupDB() error {
             return ok
         }
     }
+    
+    return nil
 }

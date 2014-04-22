@@ -3,7 +3,6 @@ package core
 import (
     "html/template"
     "path/filepath"
-    "os"
 )
 
 /* A theme is a collection of templates and resources to be used together.
@@ -50,8 +49,8 @@ var ThemeRegistry map[string]*Theme
 func overlayTemplateMap(tlist ...map[string]*template.Template) map[string]*template.Template {
     var out map[string]*template.Template
 
-    for tMap := range tlist {
-        for var tName, tPtr := range tMap {
+    for _, tMap := range tlist {
+        for tName, tPtr := range tMap {
             if out[tName] == nil {
                 out[tName] = tPtr
             }
@@ -69,7 +68,7 @@ func RegisterTheme(th *Theme) error {
         return ok
     }
 
-    for var matchedPath := range matches {
+    for _, matchedPath := range matches {
         newTemplate, ok := template.ParseFiles(matchedPath)
         if (ok != nil) {
             return ok
@@ -80,14 +79,14 @@ func RegisterTheme(th *Theme) error {
 
     tplBase := ThemeRegistry[th.BaseTheme]
     tplOverlay := overlayTemplateMap(th.Templates)
-    while (tplBase != nil) {
-        tplOverlay = overlayTemplateMap(tplOverlay, tplBase)
-        tplBase = ThemeRegistry[th.BaseTheme]
+    for tplBase != nil {
+        tplOverlay = overlayTemplateMap(tplOverlay, tplBase.Templates)
+        tplBase = ThemeRegistry[tplBase.BaseTheme]
     }
 
-    th.TmplCtxt := template.New("__master__")
+    th.TmplCtxt = template.New("__master__")
 
-    for var tName, tPtr := range tplOverlay {
+    for tName, tPtr := range tplOverlay {
         th.TmplCtxt.AddParseTree(tName, tPtr.Tree)
     }
 

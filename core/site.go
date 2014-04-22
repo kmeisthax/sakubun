@@ -5,14 +5,16 @@ import (
     "net/http"
 )
 
-var session_store Store
+var session_store sessions.Store
+var session *sessions.Session
 
 func enter_site(r *http.Request, name string) {
-    session_store = sessions.NewCookieStore(r, []byte(config.Sites[name].SessionEntropy))
+    session_store = sessions.NewCookieStore([]byte(config.Sites[name].SessionEntropy))
+    session, _ = session_store.Get(r, "sakubun")
 }
 
 func exit_site(w http.ResponseWriter, r *http.Request) {
-    session_store.Save(r, w)
+    session.Save(r, w)
 }
 
 func SiteHandler(h http.Handler) http.Handler {
