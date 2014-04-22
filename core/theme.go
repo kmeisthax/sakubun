@@ -117,9 +117,12 @@ func RenderData(th *Theme, data *interface{}, writer io.Writer) error {
         }
         
         if theme_field.Type.Kind() == reflect.String {
-            
+            theme_value := data_value.FieldByName("Theme")
+            theme_name = theme_value.String()
         }
     } else {
         return nil
     }
+    
+    return th.TmplCtxt.ExecuteTemplate(writer, theme_name, data)
 }
