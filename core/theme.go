@@ -5,7 +5,7 @@ import (
     "path/filepath"
     "reflect"
     "io"
-    "string"
+    "strings"
 )
 
 /* A theme is a collection of templates and resources to be used together.
