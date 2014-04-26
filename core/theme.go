@@ -5,6 +5,7 @@ import (
     "path/filepath"
     "reflect"
     "io"
+    "string"
 )
 
 /* A theme is a collection of templates and resources to be used together.
@@ -76,7 +77,7 @@ func RegisterTheme(th *Theme) error {
             return ok
         }
 
-        th.Templates[newTemplate.Name()] = newTemplate
+        th.Templates[strings.ToLower(newTemplate.Name())] = newTemplate
     }
 
     tplBase := ThemeRegistry[th.BaseTheme]
@@ -99,6 +100,9 @@ func RegisterTheme(th *Theme) error {
 /* Given assembled data, render it with an applicable theme.
  * 
  * Data is expected to be a struct or map of string to interface{}.
+ * If the data is of a type with a name, then that name will be used for the
+ * template. Otherwise, the data is expected to have a Theme field or key
+ * naming what template is to be used.
  */
 func RenderData(th *Theme, data *interface{}, writer io.Writer) error {
     data_type := reflect.TypeOf(data)
@@ -108,7 +112,7 @@ func RenderData(th *Theme, data *interface{}, writer io.Writer) error {
     
     data_value := reflect.ValueOf(data)
     //Variables we expect to extract from the data structure
-    var theme_name string
+    theme_name := strings.ToLower(data_type.Name())
     
     if data_type.Kind() == reflect.Struct {
         theme_field, ok := data_type.FieldByName("Theme")
