@@ -6,6 +6,7 @@ import (
     "reflect"
     "io"
     "strings"
+    "bytes"
 )
 
 /* A theme is a collection of templates and resources to be used together.
@@ -70,12 +71,22 @@ func RegisterTheme(th *Theme) error {
     if (ok != nil) {
         return ok
     }
+    
+    var tplFuncMap template.FuncMap
+    tplFuncMap["Render"] = func(data interface{}) byte[], error {
+        var tmpBuf butter.Buffer
+        RenderData(th, data, tmpBuf)
+        
+        return tmpBuf.Bytes()
+    }
 
     for _, matchedPath := range matches {
         newTemplate, ok := template.ParseFiles(matchedPath)
         if (ok != nil) {
             return ok
         }
+        
+        newTemplate.Funcs(tplFuncMap)
 
         th.Templates[strings.ToLower(newTemplate.Name())] = newTemplate
     }
@@ -83,11 +94,19 @@ func RegisterTheme(th *Theme) error {
     tplBase := ThemeRegistry[th.BaseTheme]
     tplOverlay := overlayTemplateMap(th.Templates)
     for tplBase != nil {
-        tplOverlay = overlayTemplateMap(tplOverlay, tplBase.Templates)
+        var tplCloned = map[string]*template.Template
+        
+        for k, v := range tplBase.Templates {
+            tplCloned[k], _ = v.Clone()
+            tplCloned[k].Funcs(tplFuncMap)
+        }
+        
+        tplOverlay = overlayTemplateMap(tplOverlay, tplCloned)
         tplBase = ThemeRegistry[tplBase.BaseTheme]
     }
 
     th.TmplCtxt = template.New("__master__")
+    th.TmplCtxt.Funcs(tplFuncMap)
 
     for tName, tPtr := range tplOverlay {
         th.TmplCtxt.AddParseTree(tName, tPtr.Tree)
