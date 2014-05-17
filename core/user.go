@@ -118,38 +118,27 @@ type PasswordCredential struct {
     PassHash []byte
 }
 
-/* Return the ID of the user whose permissions are being used for this request.
- * 
- * The effective UID indicates what set of permissions authorize a particular
- * action within a system. Thus it should be used for permission checks and
- * identification. Note that the effective UID should not be used for 
- */
-func GetEffectiveUID (s *sessions.Session) uuid.UUID {
-    return s.Values["EUID"].(uuid.UUID)
-}
-
 /* Return the ID of the user that logged in to this session.
- * 
- * This authenticated UID indicates who is performing a particular action.
- * It should be used primarily for logging and determining what effective UIDs
- * a user is allowed to assume.
  */
 func GetAuthenticatedUID (s *sessions.Session) uuid.UUID {
-    return s.Values["AUID"].(uuid.UUID)
+    return s.Values["UserID"].(uuid.UUID)
 }
 
-/* Login the current session as a particular user.
+/* Called after a credential is validated.
  * 
- * IsMasquerading indicates if a user is assuming another user's credentials.
- * If true, only the Effective user will be set, not the Authenticated user.
- * You should ensure that the Authenticated UID has permission to masquerade as
- * the targeted UID.
+ * An authentication is either updated or created for the particular user-
+ * credential pair, depending on if the session already posses auth data.
+ * 
+ * In either case, the session is guaranteed to contain a valid authentication
+ * ID and token.
  */
-func SetLoginSession (s *sessions.Session, u User, IsMasquerading bool) {
-    s.Values["EUID"] = u.Id
+func ApplySessionAuthentication (s *sessions.Session, u User, c Credential) {
+    s.Values["UserID"] = u.Id
     
-    if (!IsMasquerading) {
-        s.Values["AUID"] = u.Id
+    if (s.Values["AuthID"] != nil) {
+        //FIXME: Refresh the user's authentication tokens.
+    } else {
+        //FIXME: Create new authentication tokens.
     }
 }
 
