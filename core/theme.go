@@ -73,11 +73,11 @@ func RegisterTheme(th *Theme) error {
     }
     
     var tplFuncMap template.FuncMap
-    tplFuncMap["Render"] = func(data interface{}) byte[], error {
-        var tmpBuf butter.Buffer
-        RenderData(th, data, tmpBuf)
+    tplFuncMap["Render"] = func(data *interface{}) ([]byte, error) {
+        var tmpBuf bytes.Buffer
+        RenderData(th, data, &tmpBuf)
         
-        return tmpBuf.Bytes()
+        return tmpBuf.Bytes(), nil
     }
 
     for _, matchedPath := range matches {
@@ -94,7 +94,7 @@ func RegisterTheme(th *Theme) error {
     tplBase := ThemeRegistry[th.BaseTheme]
     tplOverlay := overlayTemplateMap(th.Templates)
     for tplBase != nil {
-        var tplCloned = map[string]*template.Template
+        var tplCloned map[string]*template.Template
         
         for k, v := range tplBase.Templates {
             tplCloned[k], _ = v.Clone()
