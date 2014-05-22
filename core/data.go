@@ -45,16 +45,62 @@ const (
 /* Represents information about a field in an in-database table.
  */
 type SchemaField struct {
-    FieldName string
+    /* The SQL type of this field. */
     FieldType DbType
+    
+    /* If the field is allowed to be null. */
+    IsNullable bool
+    
+    /* String-likes: Number of characters/bytes allowed in field. */
+    Length int
+    
+    /* Numeric: Number of significant digits to store. */
+    Precision int
+    
+    /* Numeric: Number of fractional digits. */
+    Scale int
+    
+    /* Default value for the field.
+     * 
+     * Default values must be of a primitive Go type compatible with the DbType
+     * specified for this field.
+     */
+    Default *interface{}
+}
+
+/* Represents information about a foreign table which should have fields that
+ * match our own. */
+type ForeignKey struct {
+    ForeignTableName string
+    
+    /* List of fields which must match between tables.
+     * Map key is the local field name; value is the foreign table's field name
+     */
+    ColumnMap map[string]string
 }
 
 /* Represents information about an in-database table from which we can pull and
  * push data from.
  */
 type Schema struct {
+    /* The name of this database table. */
     TableName string
+    
+    /* Fields present within the table. */
     Fields map[string]SchemaField
+    
+    /* List of field names which form the identity of each row. */
+    PrimaryKey []string
+    
+    /* List of additional sets of fields which must be collectively unique.
+     * 
+     * The primary key is implicitly unique.
+     */
+    UniqueKeys map[string][]string
+    
+    /* List of fields that map to fields in another table.
+     */
+    ForeignKeys map[string]ForeignKey
 }
 
 /* Given a struct type, generate a database Schema for it.
