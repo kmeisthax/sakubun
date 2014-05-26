@@ -103,6 +103,10 @@ type Schema struct {
     ForeignKeys map[string]ForeignKey
 }
 
+func (*Schema) CreateTableStmt() *Stmt, error {
+    
+}
+
 /* Given a struct type, generate a database Schema for it.
  * 
  * You cannot generate schemata from arbitrary types. Types must instead be
