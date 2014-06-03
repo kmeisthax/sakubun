@@ -5,6 +5,8 @@ import (
     _ "github.com/go-sql-driver/mysql"
     
     "reflect"
+    "fmt"
+    "strings"
 )
 
 var databases map[string]*sql.DB
@@ -103,8 +105,36 @@ type Schema struct {
     ForeignKeys map[string]ForeignKey
 }
 
-func (*Schema) CreateTableStmt() *Stmt, error {
+/* Given a schema, create a Stmt suitable for installing the schema in a DB. */
+func (sch *Schema) CreateTableStmt(forDB *sql.DB) *sql.Stmt, error {
+    colDefs := make([]string, 0, len(sch.Fields))
     
+    for fieldName, fieldSpec := range sch.Fields {
+        ourDef := ""
+        
+        ourDef += fieldName;
+        
+        switch sch.Fields[fieldName].FieldType {
+            case DBTYPE_CHAR:
+                ourDef += " CHAR"
+            case DBTYPE_VARCHAR:
+                ourDef += " VARCHAR"
+            case DBTYPE_TEXT:
+                ourDef += " TEXT"
+            case DBTYPE_BLOB:
+                ourDef += " BLOB"
+            case DBTYPE_INT:
+                ourDef += " INT"
+            case DBTYPE_FLOAT:
+                ourDef += " FLOAT"
+            case DBTYPE_NUMERIC:
+                ourDef += " NUMERIC"
+        }
+        
+        colDefs = append(colDefs, ourDef)
+    }
+    
+    stmtQuery := fmt.Sprintf("CREATE TABLE %s (%s)", sch.TableName, strings.Join(colDefs, ","))
 }
 
 /* Given a struct type, generate a database Schema for it.
