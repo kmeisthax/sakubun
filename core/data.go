@@ -115,7 +115,7 @@ func (sch *Schema) CreateTableStmt(forDB *sql.DB) (*sql.Stmt, error) {
         
         ourDef += fieldName;
         
-        switch sch.Fields[fieldName].FieldType {
+        switch fieldSpec.FieldType {
             case DBTYPE_CHAR:
                 ourDef += " CHAR"
             case DBTYPE_VARCHAR:
@@ -139,11 +139,11 @@ func (sch *Schema) CreateTableStmt(forDB *sql.DB) (*sql.Stmt, error) {
     
     colDefs = append(colDefs, fmt.Sprintf("PRIMARY KEY (%s)", strings.Join(sch.PrimaryKey, ", ")))
     
-    for uniqueKeyName, uniqueKeyFields := range sch.UniqueKeys {
+    for _, uniqueKeyFields := range sch.UniqueKeys {
         colDefs = append(colDefs, fmt.Sprintf("UNIQUE KEY (%s)", strings.Join(uniqueKeyFields, ", ")))
     }
     
-    for foreignKeyName, foreignKeySpec := range sch.ForeignKeys {
+    for _, foreignKeySpec := range sch.ForeignKeys {
         colDefs = append(colDefs, fmt.Sprintf("FOREIGN KEY (%s) REFERENCES %s (%s)", 
                                              strings.Join(foreignKeySpec.LocalColumnKey, ", "),
                                              foreignKeySpec.ForeignTableName,
@@ -151,6 +151,8 @@ func (sch *Schema) CreateTableStmt(forDB *sql.DB) (*sql.Stmt, error) {
     }
     
     stmtQuery := fmt.Sprintf("CREATE TABLE %s (%s)", sch.TableName, strings.Join(colDefs, ", "))
+    
+    return forDB.Prepare(stmtQuery)
 }
 
 /* Given a struct type, generate a database Schema for it.
