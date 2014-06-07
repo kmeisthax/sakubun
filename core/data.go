@@ -36,11 +36,11 @@ type DbType int;
 
 const (
     DBTYPE_CHAR DbType = iota
-    DBTYPE_VARCHAR,
-    DBTYPE_TEXT,
-    DBTYPE_BLOB,
-    DBTYPE_INT,
-    DBTYPE_FLOAT,
+    DBTYPE_VARCHAR
+    DBTYPE_TEXT
+    DBTYPE_BLOB
+    DBTYPE_INT
+    DBTYPE_FLOAT
     DBTYPE_NUMERIC
 );
 
@@ -79,7 +79,6 @@ type ForeignKey struct {
     ForeignTableName string
     
     /* List of foreign columns that the key must match. */
-     */
     ForeignColumnKey []string
 }
 
@@ -108,8 +107,8 @@ type Schema struct {
 }
 
 /* Given a schema, create a Stmt suitable for installing the schema in a DB. */
-func (sch *Schema) CreateTableStmt(forDB *sql.DB) *sql.Stmt, error {
-    colDefs := make([]string, 0, len(sch.Fields) + 1 + len(sch.UniqueKeys) + len(sch.ForeignKeys)
+func (sch *Schema) CreateTableStmt(forDB *sql.DB) (*sql.Stmt, error) {
+    colDefs := make([]string, 0, len(sch.Fields) + 1 + len(sch.UniqueKeys) + len(sch.ForeignKeys))
     
     for fieldName, fieldSpec := range sch.Fields {
         ourDef := ""
@@ -148,7 +147,7 @@ func (sch *Schema) CreateTableStmt(forDB *sql.DB) *sql.Stmt, error {
         colDefs = append(colDefs, fmt.Sprintf("FOREIGN KEY (%s) REFERENCES %s (%s)", 
                                              strings.Join(foreignKeySpec.LocalColumnKey, ", "),
                                              foreignKeySpec.ForeignTableName,
-                                             strings.Join(foreignKeySpec.ForeignColumnKey, ", "))
+                                             strings.Join(foreignKeySpec.ForeignColumnKey, ", ")))
     }
     
     stmtQuery := fmt.Sprintf("CREATE TABLE %s (%s)", sch.TableName, strings.Join(colDefs, ", "))
