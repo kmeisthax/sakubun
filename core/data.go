@@ -73,12 +73,14 @@ type SchemaField struct {
 /* Represents information about a foreign table which should have fields that
  * match our own. */
 type ForeignKey struct {
+    /* List of local columns that compromise the key. */
+    LocalColumnKey []string
+    
     ForeignTableName string
     
-    /* List of fields which must match between tables.
-     * Map key is the local field name; value is the foreign table's field name
+    /* List of foreign columns that the key must match. */
      */
-    ColumnMap map[string]string
+    ForeignColumnKey []string
 }
 
 /* Represents information about an in-database table from which we can pull and
@@ -107,7 +109,7 @@ type Schema struct {
 
 /* Given a schema, create a Stmt suitable for installing the schema in a DB. */
 func (sch *Schema) CreateTableStmt(forDB *sql.DB) *sql.Stmt, error {
-    colDefs := make([]string, 0, len(sch.Fields))
+    colDefs := make([]string, 0, len(sch.Fields) + 1 + len(sch.UniqueKeys) + len(sch.ForeignKeys)
     
     for fieldName, fieldSpec := range sch.Fields {
         ourDef := ""
@@ -129,12 +131,27 @@ func (sch *Schema) CreateTableStmt(forDB *sql.DB) *sql.Stmt, error {
                 ourDef += " FLOAT"
             case DBTYPE_NUMERIC:
                 ourDef += " NUMERIC"
+            default:
+                ourDef += " INT"
         }
         
         colDefs = append(colDefs, ourDef)
     }
     
-    stmtQuery := fmt.Sprintf("CREATE TABLE %s (%s)", sch.TableName, strings.Join(colDefs, ","))
+    colDefs = append(colDefs, fmt.Sprintf("PRIMARY KEY (%s)", strings.Join(sch.PrimaryKey, ", ")))
+    
+    for uniqueKeyName, uniqueKeyFields := range sch.UniqueKeys {
+        colDefs = append(colDefs, fmt.Sprintf("UNIQUE KEY (%s)", strings.Join(uniqueKeyFields, ", ")))
+    }
+    
+    for foreignKeyName, foreignKeySpec := range sch.ForeignKeys {
+        colDefs = append(colDefs, fmt.Sprintf("FOREIGN KEY (%s) REFERENCES %s (%s)", 
+                                             strings.Join(foreignKeySpec.LocalColumnKey, ", "),
+                                             foreignKeySpec.ForeignTableName,
+                                             strings.Join(foreignKeySpec.ForeignColumnKey, ", "))
+    }
+    
+    stmtQuery := fmt.Sprintf("CREATE TABLE %s (%s)", sch.TableName, strings.Join(colDefs, ", "))
 }
 
 /* Given a struct type, generate a database Schema for it.
