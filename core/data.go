@@ -155,6 +155,25 @@ func (sch *Schema) CreateTableStmt(forDB *sql.DB) (*sql.Stmt, error) {
     return forDB.Prepare(stmtQuery)
 }
 
+/* Create a prepared statement for inserting data into the table.
+ * The FieldNames provided will be the list of arguments to pipe into the query
+ * at Exec time. 
+ */
+func (sch *Schema) InsertStmt(forDB *sql.DB, FieldNames []string) (*sql.Stmt, error) {
+    paramsString := make([]string, 0, len(FieldNames))
+    
+    for i := 0; i < len(FieldNames); i++ {
+        paramsString[i] = "?"
+    }
+    
+    stmtQuery := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s)",
+                             sch.TableName,
+                             strings.Join(FieldNames, ", "),
+                             strings.Join(paramsString, ", "))
+    
+    return forDB.Prepare(stmtQuery)
+}
+
 /* Given a struct type, generate a database Schema for it.
  * 
  * You cannot generate schemata from arbitrary types. Types must instead be
